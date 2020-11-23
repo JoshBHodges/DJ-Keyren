@@ -1,4 +1,4 @@
 FROM java:8
-WORKDIR /
-ADD . .
-CMD java - jar Bot.jar
+COPY ./out/production/DockerJavaApp/ /tmp
+WORKDIR /tmp
+CMD java - jar DJ-Keyren.jar
