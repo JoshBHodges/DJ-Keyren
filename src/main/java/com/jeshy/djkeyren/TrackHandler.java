@@ -32,10 +32,15 @@ public class TrackHandler implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
+        EmbedBuilder embed = new EmbedBuilder()
+                .setAuthor("Added to queue","",user.getAvatar())
+                .setColor(Color.cyan)
+                .setTitle(playlist.getName());
         playlist.getTracks().forEach(audioTrack -> {
-            channel.sendMessage("**Added to queue** " + audioTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")");
+            embed.addField(audioTrack.getInfo().title,"");
             this.trackScheduler.queue(audioTrack);
         });
+        channel.sendMessage(embed);
     }
 
     @Override
