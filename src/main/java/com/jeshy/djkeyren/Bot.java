@@ -15,9 +15,10 @@ public class Bot {
     private static MusicPlayer musicPlayer;
 
     public static void main(String[] args) {
+
         //Login the bot
         DiscordApi api = new DiscordApiBuilder()
-                .setToken(args[0])
+                .setToken(System.getenv("BOT_TOKEN"))
                 .login().join();
 
         if(!api.getYourself().getConnectedVoiceChannels().isEmpty()){
