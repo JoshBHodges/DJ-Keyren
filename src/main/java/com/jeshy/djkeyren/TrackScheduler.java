@@ -4,6 +4,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import org.javacord.api.DiscordApi;
 
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
@@ -11,13 +12,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
+    private final DiscordApi api;
 
     /**
      * @param player The audio player this scheduler uses
      */
-    public TrackScheduler(AudioPlayer player) {
+    public TrackScheduler(AudioPlayer player, DiscordApi api) {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
+        this.api = api;
     }
 
     /**
@@ -40,7 +43,19 @@ public class TrackScheduler extends AudioEventAdapter {
     public void nextTrack() {
         // Start the next track, regardless of if something is already playing or not. In case queue was empty, we are
         // giving null to startTrack, which is a valid argument and will simply stop the player.
-        player.startTrack(queue.poll(), false);
+        if(queue.isEmpty()){
+            if(!api.getYourself().getConnectedVoiceChannels().isEmpty()){
+                api.getYourself().getConnectedVoiceChannels().forEach(connectedVC ->{
+                    try {
+                        connectedVC.connect().get().close();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                });
+            }
+        }else{
+            player.startTrack(queue.poll(), false);
+        }
     }
 
     @Override

@@ -1,7 +1,6 @@
 package com.jeshy.djkeyren;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -12,14 +11,11 @@ import org.javacord.api.entity.user.User;
 import java.awt.*;
 
 public class TrackHandler implements AudioLoadResultHandler {
-    private final AudioPlayer player;
-    private final TextChannel channel;
+    private TextChannel channel;
     private final TrackScheduler trackScheduler;
     private User user;
 
-    public TrackHandler(AudioPlayer player, TextChannel channel, TrackScheduler trackScheduler) {
-        this.player = player;
-        this.channel = channel;
+    public TrackHandler(TrackScheduler trackScheduler) {
         this.trackScheduler = trackScheduler;
     }
 
@@ -54,5 +50,9 @@ public class TrackHandler implements AudioLoadResultHandler {
 
     public void setUser(User user) {
         this.user = user;
+    }
+
+    public void setChannel(TextChannel textChannel) {
+        this.channel = textChannel;
     }
 }

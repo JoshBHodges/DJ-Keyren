@@ -17,8 +17,9 @@ public class MusicPlayer{
     private final TrackScheduler trackScheduler;
     private final AudioPlayer player;
 
-    public void playSong(String song, User user){
+    public void playSong(String song, User user, TextChannel textChannel){
         trackHandler.setUser(user);
+        this.trackHandler.setChannel(textChannel);
         playerManager.loadItem(song,trackHandler);
     }
 
@@ -28,14 +29,14 @@ public class MusicPlayer{
         this.playerManager = new DefaultAudioPlayerManager();
         this.playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         player = playerManager.createPlayer();
-        this.trackScheduler = new TrackScheduler(player);
+        this.trackScheduler = new TrackScheduler(player,api);
         player.addListener(trackScheduler);
 
         AudioSource source = new LavaPlayerAudioSource(MusicPlayer.api, player);
         audioConnection.setAudioSource(source);
 
-        this.trackHandler = new TrackHandler(player,textChannel, trackScheduler);
-        playSong(song,user);
+        this.trackHandler = new TrackHandler(trackScheduler);
+        playSong(song,user,textChannel);
 
     }
 

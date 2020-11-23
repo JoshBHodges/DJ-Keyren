@@ -51,7 +51,7 @@ public class Bot {
                     }
 
                     if (!api.getYourself().getConnectedVoiceChannels().isEmpty()) {
-                        musicPlayer.playSong(url, user);
+                        musicPlayer.playSong(url, user, event.getChannel());
                     } else {
                         voiceChannel = event.getMessageAuthor().getConnectedVoiceChannel().get();
                         voiceChannel.connect().thenAccept(audioConnection -> {
