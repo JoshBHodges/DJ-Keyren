@@ -34,7 +34,7 @@ public class TrackHandler implements AudioLoadResultHandler {
     public void playlistLoaded(AudioPlaylist playlist) {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Added to queue","",user.getAvatar())
-                .setColor(Color.cyan)
+                .setColor(Color.red)
                 .setTitle(playlist.getName());
         playlist.getTracks().forEach(audioTrack -> {
             embed.addField(audioTrack.getInfo().title,"");
