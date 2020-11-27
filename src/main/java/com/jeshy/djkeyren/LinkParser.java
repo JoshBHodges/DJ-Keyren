@@ -8,8 +8,11 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class YTS {
+public class LinkParser {
 
+    public static boolean isLink(String link){
+        return isYTLink(link);
+    }
 
     public static String YTSearch(String searchQ) {
         try {
@@ -24,7 +27,7 @@ public class YTS {
         return null;
     }
 
-    public static boolean isLink(String isUrl) {
+    private static boolean isYTLink(String isUrl) {
         Pattern p = Pattern.compile("https://www\\.youtube.com/watch\\?v=(.+?)");
         Matcher m = p.matcher(isUrl);
         return m.find();

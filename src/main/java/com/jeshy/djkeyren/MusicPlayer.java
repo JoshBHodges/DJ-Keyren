@@ -17,27 +17,21 @@ public class MusicPlayer{
     private final TrackScheduler trackScheduler;
     private final AudioPlayer player;
 
-    public void playSong(String song, User user, TextChannel textChannel){
+    public void playSong(String song, User user){
         trackHandler.setUser(user);
-        this.trackHandler.setChannel(textChannel);
         playerManager.loadItem(song,trackHandler);
     }
 
-    public MusicPlayer(DiscordApi api, AudioConnection audioConnection, String song, TextChannel textChannel, User user) {
+    public MusicPlayer(DiscordApi api, AudioConnection audioConnection,TextChannel channel) {
         MusicPlayer.api = api;
-
-        this.playerManager = new DefaultAudioPlayerManager();
-        this.playerManager.registerSourceManager(new YoutubeAudioSourceManager());
+        playerManager = new DefaultAudioPlayerManager();
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         player = playerManager.createPlayer();
-        this.trackScheduler = new TrackScheduler(player,api);
+        trackScheduler = new TrackScheduler(player,api,audioConnection,channel);
+        trackHandler = new TrackHandler(trackScheduler,channel);
         player.addListener(trackScheduler);
-
         AudioSource source = new LavaPlayerAudioSource(MusicPlayer.api, player);
         audioConnection.setAudioSource(source);
-
-        this.trackHandler = new TrackHandler(trackScheduler);
-        playSong(song,user,textChannel);
-
     }
 
     public TrackScheduler getTrackScheduler() {

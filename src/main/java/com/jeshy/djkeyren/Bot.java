@@ -21,8 +21,8 @@ public class Bot {
                 .setToken(System.getenv("BOT_TOKEN"))
                 .login().join();
 
-        if(!api.getYourself().getConnectedVoiceChannels().isEmpty()){
-            api.getYourself().getConnectedVoiceChannels().forEach(connectedVC ->{
+        if (!api.getYourself().getConnectedVoiceChannels().isEmpty()) {
+            api.getYourself().getConnectedVoiceChannels().forEach(connectedVC -> {
                 try {
                     connectedVC.connect().get().close();
                 } catch (Exception e) {
@@ -40,33 +40,35 @@ public class Bot {
                     new MessageBuilder()
                             .append("<@" + event.getMessageAuthor().getId() + "> **You need to be in a voice channel!**")
                             .send(event.getChannel());
-                }else {
+                } else {
+                    if (api.getYourself().getConnectedVoiceChannels().isEmpty()) {
+                        voiceChannel = event.getMessageAuthor().getConnectedVoiceChannel().get();
+                        try {
+                            musicPlayer = new MusicPlayer(api, voiceChannel.connect().get(),event.getChannel());
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
 
                     String url;
-                    if (!YTS.isLink(message.split(" ")[1])) {
-                        System.out.println(message.substring(6));
-                        url = YTS.YTSearch(message.substring(6));
-                    } else {
+                    boolean isLink = LinkParser.isLink(message.substring(6));
+
+                    if(isLink) {
                         url = message.split(" ")[1];
+                    }else {
+                        url = LinkParser.YTSearch(message.substring(6));
                     }
 
-                    if (!api.getYourself().getConnectedVoiceChannels().isEmpty()) {
-                        musicPlayer.playSong(url, user, event.getChannel());
-                    } else {
-                        voiceChannel = event.getMessageAuthor().getConnectedVoiceChannel().get();
-                        voiceChannel.connect().thenAccept(audioConnection -> {
-                            musicPlayer = new MusicPlayer(api, audioConnection, url, event.getChannel(), user);
-                        }).exceptionally(e -> {
-                            // Failed to connect to voice channel (no permissions?)
-                            e.printStackTrace();
-                            return null;
-                        });
-                    }
+                    musicPlayer.playSong(url, user);
                 }
             }
 
-            if (message.startsWith(".next")){
-                musicPlayer.getTrackScheduler().nextTrack();
+            if (message.startsWith(".next")) {
+                musicPlayer.getTrackScheduler().nextTrack(true);
+            }
+
+            if (message.startsWith(".stop")) {
+                musicPlayer.getTrackScheduler().stopMusic();
             }
 
 

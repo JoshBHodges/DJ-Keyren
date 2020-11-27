@@ -15,8 +15,9 @@ public class TrackHandler implements AudioLoadResultHandler {
     private final TrackScheduler trackScheduler;
     private User user;
 
-    public TrackHandler(TrackScheduler trackScheduler) {
+    public TrackHandler(TrackScheduler trackScheduler, TextChannel channel) {
         this.trackScheduler = trackScheduler;
+        this.channel = channel;
     }
 
     @Override
@@ -32,10 +33,11 @@ public class TrackHandler implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
+
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Added to queue","",user.getAvatar())
-                .setColor(Color.red)
-                .setTitle(playlist.getName());
+                .setTitle(playlist.getName())
+                .setColor(Color.cyan);
         playlist.getTracks().forEach(audioTrack -> {
             embed.addField(audioTrack.getInfo().title,"");
             this.trackScheduler.queue(audioTrack);
@@ -55,9 +57,5 @@ public class TrackHandler implements AudioLoadResultHandler {
 
     public void setUser(User user) {
         this.user = user;
-    }
-
-    public void setChannel(TextChannel textChannel) {
-        this.channel = textChannel;
     }
 }
