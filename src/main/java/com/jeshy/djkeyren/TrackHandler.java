@@ -21,14 +21,12 @@ public class TrackHandler implements AudioLoadResultHandler {
     }
 
     @Override
-    public void trackLoaded(AudioTrack track) {
-        EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Added to queue", "", user.getAvatar())
-                .setColor(Color.cyan)
-                .setTitle(track.getInfo().title)
-                .setUrl(track.getInfo().uri);
-        channel.sendMessage(embed);
-        this.trackScheduler.queue(track);
+    public void trackLoaded(AudioTrack audioTrack) {
+        try {
+            this.trackScheduler.queue(audioTrack, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -36,11 +34,17 @@ public class TrackHandler implements AudioLoadResultHandler {
         EmbedBuilder embed = new EmbedBuilder()
                 .setAuthor("Added to queue", "", user.getAvatar())
                 .setColor(Color.cyan);
+
         playlist.getTracks().forEach(audioTrack -> {
             TrackInfo trackInfo = TrackInfo.createTrack(audioTrack.getInfo());
-            embed.addInlineField(trackInfo.title,String.valueOf(trackInfo.getLength()));
-            this.trackScheduler.queue(audioTrack);
+            embed.addInlineField(trackInfo.title, String.valueOf(trackInfo.getLength()));
+            try {
+                this.trackScheduler.queue(audioTrack, false);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         });
+
         System.out.println();
         channel.sendMessage(embed);
     }

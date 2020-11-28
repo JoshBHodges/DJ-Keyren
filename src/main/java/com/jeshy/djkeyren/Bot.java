@@ -8,6 +8,7 @@ import org.javacord.api.entity.message.MessageBuilder;
 import org.javacord.api.entity.user.User;
 
 import java.util.Optional;
+import java.util.concurrent.ExecutionException;
 
 public class Bot {
 
@@ -64,17 +65,24 @@ public class Bot {
             }
 
             if (message.startsWith(".next")) {
-                musicPlayer.getTrackScheduler().nextTrack(true);
+                try {
+                    musicPlayer.getTrackScheduler().nextTrack(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             if (message.startsWith(".stop")) {
-                musicPlayer.getTrackScheduler().stopMusic();
+                try {
+                    musicPlayer.getTrackScheduler().stopMusic();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
 
             if(message.startsWith(".queue")){
                 musicPlayer.getTrackScheduler().getQueue();
             }
-
 
         });
     }
