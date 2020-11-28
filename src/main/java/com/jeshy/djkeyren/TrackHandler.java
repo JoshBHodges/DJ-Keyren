@@ -11,7 +11,7 @@ import org.javacord.api.entity.user.User;
 import java.awt.*;
 
 public class TrackHandler implements AudioLoadResultHandler {
-    private TextChannel channel;
+    private final TextChannel channel;
     private final TrackScheduler trackScheduler;
     private User user;
 
@@ -23,7 +23,7 @@ public class TrackHandler implements AudioLoadResultHandler {
     @Override
     public void trackLoaded(AudioTrack track) {
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Added to queue","",user.getAvatar())
+                .setAuthor("Added to queue", "", user.getAvatar())
                 .setColor(Color.cyan)
                 .setTitle(track.getInfo().title)
                 .setUrl(track.getInfo().uri);
@@ -33,15 +33,15 @@ public class TrackHandler implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-
         EmbedBuilder embed = new EmbedBuilder()
-                .setAuthor("Added to queue","",user.getAvatar())
-                .setTitle(playlist.getName())
+                .setAuthor("Added to queue", "", user.getAvatar())
                 .setColor(Color.cyan);
         playlist.getTracks().forEach(audioTrack -> {
-            embed.addField(audioTrack.getInfo().title,"");
+            TrackInfo trackInfo = TrackInfo.createTrack(audioTrack.getInfo());
+            embed.addInlineField(trackInfo.title,String.valueOf(trackInfo.getLength()));
             this.trackScheduler.queue(audioTrack);
         });
+        System.out.println();
         channel.sendMessage(embed);
     }
 

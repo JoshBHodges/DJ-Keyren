@@ -71,6 +71,10 @@ public class Bot {
                 musicPlayer.getTrackScheduler().stopMusic();
             }
 
+            if(message.startsWith(".queue")){
+                musicPlayer.getTrackScheduler().getQueue();
+            }
+
 
         });
     }

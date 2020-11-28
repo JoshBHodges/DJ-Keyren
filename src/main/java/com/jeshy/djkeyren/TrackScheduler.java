@@ -16,17 +16,15 @@ import java.util.concurrent.LinkedBlockingQueue;
 public class TrackScheduler extends AudioEventAdapter {
     private final AudioPlayer player;
     private final BlockingQueue<AudioTrack> queue;
-    private final DiscordApi api;
     private final AudioConnection audioConnection;
     private final TextChannel channel;
 
     /**
      * @param player The audio player this scheduler uses
      */
-    public TrackScheduler(AudioPlayer player, DiscordApi api, AudioConnection audioConnection,TextChannel channel) {
+    public TrackScheduler(AudioPlayer player, AudioConnection audioConnection,TextChannel channel) {
         this.player = player;
         this.queue = new LinkedBlockingQueue<>();
-        this.api = api;
         this.audioConnection = audioConnection;
         this.channel = channel;
     }
@@ -43,6 +41,14 @@ public class TrackScheduler extends AudioEventAdapter {
         if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
+    }
+
+    public void getQueue(){
+        EmbedBuilder embedBuilder = new EmbedBuilder()
+                .setAuthor("Song Queue");
+        queue.forEach(audioTrack -> {
+            embedBuilder.addField(audioTrack.getInfo().title,"");
+        });
     }
 
     /**
